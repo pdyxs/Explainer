@@ -5,13 +5,26 @@ using UnityEngine.EventSystems;
 
 namespace PDYXS.Explainer
 {
-    public abstract class Explainable : MonoBehaviour, IPointerClickHandler
+    [RequireComponent(typeof(Focusable))]
+    public abstract class Explainable : MonoBehaviour
     {
         public abstract string Explanation();
 
-        public void OnPointerClick(PointerEventData eventData)
+        protected virtual void Start()
+        {
+            var focusable = GetComponent<Focusable>();
+            focusable.OnFocusGained.AddListener(OnFocusGained);
+            focusable.OnFocusLost.AddListener(OnFocusLost);
+        }
+
+        private void OnFocusGained()
         {
             ExplainerText.SetText(Explanation());
+        }
+
+        private void OnFocusLost()
+        {
+            ExplainerText.SetText("");
         }
     }
 }
