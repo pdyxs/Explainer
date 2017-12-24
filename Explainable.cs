@@ -17,9 +17,13 @@ namespace PDYXS.Explainer
             focusable.OnFocusLost.AddListener(OnFocusLost);
         }
 
+        public void SetText() {
+            ExplainerText.SetText(Explanation());
+        }
+
         private void OnFocusGained()
         {
-            ExplainerText.SetText(Explanation());
+            SetText();
         }
 
         private void OnFocusLost()

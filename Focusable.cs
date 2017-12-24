@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace PDYXS.Explainer
 {
@@ -31,9 +32,18 @@ namespace PDYXS.Explainer
         public FocusEvent OnFocusGained = new FocusEvent();
         public FocusEvent OnFocusLost = new FocusEvent();
 
-        public void OnPointerClick(PointerEventData eventData)
+        public FocusEvent OnHoverGained = new FocusEvent();
+        public FocusEvent OnHoverLost = new FocusEvent();
+
+        public void Focus() 
         {
-            if (FocusedObject != this) {
+            if (HoveredObject != null &&
+                HoveredObject != this)
+            {
+                HoveredObject.OnHoverLost.Invoke();
+            }
+            if (FocusedObject != this)
+            {
                 if (FocusedObject != null)
                 {
                     FocusedObject.OnFocusLost.Invoke();
@@ -44,20 +54,30 @@ namespace PDYXS.Explainer
             ClickedObject = this;
         }
 
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            Focus();
+        }
+
         public void OnPointerEnter(PointerEventData eventData)
         {
             if (FocusedObject != this) {
+                if (HoveredObject != null) {
+                    HoveredObject.OnHoverLost.Invoke();
+                }
                 if (FocusedObject != null) {
                     FocusedObject.OnFocusLost.Invoke();
                 }
                 HoveredObject = this;
                 OnFocusGained.Invoke();
+                OnHoverGained.Invoke();
             }
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
             if (HoveredObject == this) {
+                OnHoverLost.Invoke();
                 OnFocusLost.Invoke();
                 HoveredObject = null;
                 if (ClickedObject != null) {
